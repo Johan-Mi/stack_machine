@@ -1,11 +1,19 @@
 mod instruction;
 mod machine;
 mod value;
-use machine::*;
+use instruction::Instruction;
+use machine::Machine;
 
 fn main() {
-    let program = [];
-    let machine = Machine::new(&program);
+    use Instruction::*;
+    let program = [Nop, Pop];
 
-    println!("Hello, world!");
+    let mut machine = Machine::new(&program);
+
+    loop {
+        if let Err(err) = machine.step() {
+            eprintln!("Error: {}", err);
+            break;
+        }
+    }
 }
