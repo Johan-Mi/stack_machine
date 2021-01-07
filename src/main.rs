@@ -3,10 +3,19 @@ mod machine;
 mod value;
 use instruction::Instruction;
 use machine::Machine;
+use value::Value;
 
 fn main() {
     use Instruction::*;
-    let program = [Nop, Pop];
+    let program = [
+        Nop,
+        Push {
+            value: Value::Int(42),
+        },
+        Dup,
+        Pop,
+        Print,
+    ];
 
     let mut machine = Machine::new(&program);
 

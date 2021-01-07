@@ -8,6 +8,8 @@ pub enum MachineError {
     EndOfProgram,
     #[error("tried to pop from empty stack")]
     PopEmptyStack,
+    #[error("tried to get top of empty stack")]
+    TopEmptyStack,
 }
 
 pub struct Machine<'a> {
@@ -29,6 +31,14 @@ impl<'a> Machine<'a> {
         self.stack.pop().ok_or(MachineError::PopEmptyStack)
     }
 
+    fn push(&mut self, value: Value) {
+        self.stack.push(value);
+    }
+
+    fn top(&self) -> Result<&Value, MachineError> {
+        self.stack.last().ok_or(MachineError::TopEmptyStack)
+    }
+
     pub fn step(&mut self) -> Result<(), MachineError> {
         match self.program.get(self.pc) {
             None => Err(MachineError::EndOfProgram),
@@ -39,6 +49,23 @@ impl<'a> Machine<'a> {
             Some(Instruction::Pop) => {
                 self.pc += 1;
                 self.pop()?;
+                Ok(())
+            }
+            Some(Instruction::Push { value }) => {
+                self.push(value.clone());
+                self.pc += 1;
+                Ok(())
+            }
+            Some(Instruction::Dup) => {
+                self.pc += 1;
+                let top = self.top()?.clone();
+                self.push(top);
+                Ok(())
+            }
+            Some(Instruction::Print) => {
+                self.pc += 1;
+                let value = self.pop()?;
+                println!("{}", value);
                 Ok(())
             }
         }
