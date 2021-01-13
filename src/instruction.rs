@@ -6,4 +6,5 @@ pub enum Instruction {
     Push { value: Value },
     Dup,
     Print,
+    Add,
 }

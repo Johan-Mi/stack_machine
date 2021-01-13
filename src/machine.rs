@@ -27,6 +27,16 @@ impl<'a> Machine<'a> {
         }
     }
 
+    pub fn run(&mut self) -> Result<(), MachineError> {
+        loop {
+            match self.step() {
+                Ok(()) => (),
+                Err(MachineError::EndOfProgram) => break Ok(()),
+                Err(err) => break Err(err),
+            }
+        }
+    }
+
     fn pop(&mut self) -> Result<Value, MachineError> {
         self.stack.pop().ok_or(MachineError::PopEmptyStack)
     }
@@ -67,6 +77,17 @@ impl<'a> Machine<'a> {
                 let value = self.pop()?;
                 println!("{}", value);
                 Ok(())
+            }
+            Some(Instruction::Add) => {
+                self.pc += 1;
+                let rhs = self.pop()?;
+                let lhs = self.pop()?;
+                match (lhs, rhs) {
+                    (Value::Int(lhs), Value::Int(rhs)) => {
+                        self.push(Value::Int(lhs + rhs));
+                        Ok(())
+                    }
+                }
             }
         }
     }

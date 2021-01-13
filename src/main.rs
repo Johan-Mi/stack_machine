@@ -10,19 +10,20 @@ fn main() {
     let program = [
         Nop,
         Push {
-            value: Value::Int(42),
+            value: Value::Int(40),
+        },
+        Push {
+            value: Value::Int(2),
         },
         Dup,
         Pop,
+        Add,
         Print,
     ];
 
     let mut machine = Machine::new(&program);
 
-    loop {
-        if let Err(err) = machine.step() {
-            eprintln!("Error: {}", err);
-            break;
-        }
+    if let Err(err) = machine.run() {
+        eprintln!("Error: {}", err);
     }
 }
