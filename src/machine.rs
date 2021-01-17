@@ -12,18 +12,22 @@ pub enum MachineError {
     TopEmptyStack,
 }
 
-pub struct Machine<'a> {
-    program: &'a [Value],
+pub struct Machine<I>
+where
+    I: Iterator<Item = Value>,
+{
+    program: I,
     stack: Vec<Value>,
-    pc: usize,
 }
 
-impl<'a> Machine<'a> {
-    pub fn new(program: &'a [Value]) -> Self {
+impl<I> Machine<I>
+where
+    I: Iterator<Item = Value>,
+{
+    pub fn new(program: I) -> Self {
         Self {
             program,
             stack: Vec::new(),
-            pc: 0,
         }
     }
 
@@ -50,15 +54,11 @@ impl<'a> Machine<'a> {
     }
 
     pub fn step(&mut self) -> Result<(), MachineError> {
-        let v = self
-            .program
-            .get(self.pc)
-            .ok_or(MachineError::EndOfProgram)?;
-        self.pc += 1;
+        let v = self.program.next().ok_or(MachineError::EndOfProgram)?;
         match v {
-            Value::Instruction(inst) => self.exec_instruction(inst),
+            Value::Instruction(inst) => self.exec_instruction(&inst),
             v => {
-                self.push(v.clone());
+                self.push(v);
                 Ok(())
             }
         }

@@ -6,7 +6,7 @@ use machine::Machine;
 use value::Value::*;
 
 fn main() {
-    let program = [
+    let program = vec![
         Instruction(Nop),
         Int(40),
         Int(4),
@@ -18,7 +18,7 @@ fn main() {
         Instruction(Print),
     ];
 
-    let mut machine = Machine::new(&program);
+    let mut machine = Machine::new(program.into_iter());
 
     if let Err(err) = machine.run() {
         eprintln!("Error: {}", err);
