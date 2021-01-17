@@ -1,10 +1,11 @@
-use super::value::Value;
+use derive_more::Display;
 
+#[derive(Clone, Display)]
 pub enum Instruction {
     Nop,
     Pop,
-    Push { value: Value },
     Dup,
     Print,
     Add,
+    Sub,
 }

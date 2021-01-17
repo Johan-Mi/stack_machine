@@ -1,24 +1,21 @@
 mod instruction;
 mod machine;
 mod value;
-use instruction::Instruction;
+use instruction::Instruction::*;
 use machine::Machine;
-use value::Value;
+use value::Value::*;
 
 fn main() {
-    use Instruction::*;
     let program = [
-        Nop,
-        Push {
-            value: Value::Int(40),
-        },
-        Push {
-            value: Value::Int(2),
-        },
-        Dup,
-        Pop,
-        Add,
-        Print,
+        Instruction(Nop),
+        Int(40),
+        Int(4),
+        Int(2),
+        Instruction(Dup),
+        Instruction(Pop),
+        Instruction(Sub),
+        Instruction(Add),
+        Instruction(Print),
     ];
 
     let mut machine = Machine::new(&program);

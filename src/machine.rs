@@ -13,13 +13,13 @@ pub enum MachineError {
 }
 
 pub struct Machine<'a> {
-    program: &'a [Instruction],
+    program: &'a [Value],
     stack: Vec<Value>,
     pc: usize,
 }
 
 impl<'a> Machine<'a> {
-    pub fn new(program: &'a [Instruction]) -> Self {
+    pub fn new(program: &'a [Value]) -> Self {
         Self {
             program,
             stack: Vec::new(),
@@ -50,36 +50,41 @@ impl<'a> Machine<'a> {
     }
 
     pub fn step(&mut self) -> Result<(), MachineError> {
-        match self.program.get(self.pc) {
-            None => Err(MachineError::EndOfProgram),
-            Some(Instruction::Nop) => {
-                self.pc += 1;
+        let v = self
+            .program
+            .get(self.pc)
+            .ok_or(MachineError::EndOfProgram)?;
+        self.pc += 1;
+        match v {
+            Value::Instruction(inst) => self.exec_instruction(inst),
+            v => {
+                self.push(v.clone());
                 Ok(())
             }
-            Some(Instruction::Pop) => {
-                self.pc += 1;
+        }
+    }
+
+    pub fn exec_instruction(
+        &mut self,
+        inst: &Instruction,
+    ) -> Result<(), MachineError> {
+        match inst {
+            Instruction::Nop => Ok(()),
+            Instruction::Pop => {
                 self.pop()?;
                 Ok(())
             }
-            Some(Instruction::Push { value }) => {
-                self.push(value.clone());
-                self.pc += 1;
-                Ok(())
-            }
-            Some(Instruction::Dup) => {
-                self.pc += 1;
+            Instruction::Dup => {
                 let top = self.top()?.clone();
                 self.push(top);
                 Ok(())
             }
-            Some(Instruction::Print) => {
-                self.pc += 1;
+            Instruction::Print => {
                 let value = self.pop()?;
                 println!("{}", value);
                 Ok(())
             }
-            Some(Instruction::Add) => {
-                self.pc += 1;
+            Instruction::Add => {
                 let rhs = self.pop()?;
                 let lhs = self.pop()?;
                 match (lhs, rhs) {
@@ -87,6 +92,18 @@ impl<'a> Machine<'a> {
                         self.push(Value::Int(lhs + rhs));
                         Ok(())
                     }
+                    _ => todo!(),
+                }
+            }
+            Instruction::Sub => {
+                let rhs = self.pop()?;
+                let lhs = self.pop()?;
+                match (lhs, rhs) {
+                    (Value::Int(lhs), Value::Int(rhs)) => {
+                        self.push(Value::Int(lhs - rhs));
+                        Ok(())
+                    }
+                    _ => todo!(),
                 }
             }
         }
