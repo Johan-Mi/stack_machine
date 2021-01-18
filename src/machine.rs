@@ -1,5 +1,7 @@
 use super::instruction::Instruction;
 use super::value::Value;
+use itertools::Itertools;
+use std::borrow::Cow;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -55,13 +57,23 @@ where
 
     pub fn step(&mut self) -> Result<(), MachineError> {
         let v = self.program.next().ok_or(MachineError::EndOfProgram)?;
-        match v {
+        println!("Running: {}", v);
+        let ret = match v {
             Value::Instruction(inst) => self.exec_instruction(&inst),
             v => {
                 self.push(v);
                 Ok(())
             }
-        }
+        };
+        println!(
+            "Stack:   [{}]",
+            self.stack
+                .iter()
+                .map(|v| Cow::Owned(v.to_string()))
+                .intersperse(Cow::Borrowed(" "))
+                .collect::<String>()
+        );
+        ret
     }
 
     pub fn exec_instruction(

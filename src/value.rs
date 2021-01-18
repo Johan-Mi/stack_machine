@@ -5,6 +5,6 @@ use derive_more::Display;
 #[derive(Clone, Display)]
 pub enum Value {
     Int(i32),
-    List(Box<List>),
+    List(List),
     Instruction(Instruction),
 }
