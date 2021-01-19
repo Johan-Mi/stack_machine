@@ -1,4 +1,6 @@
 use super::value::Value;
+use itertools::Itertools;
+use std::borrow::Cow;
 use std::fmt::{self, Display};
 use std::rc::Rc;
 
@@ -16,28 +18,26 @@ pub struct Node {
 
 impl List {
     pub fn iter(&self) -> ListIter {
-        ListIter::new(&self.head)
+        ListIter::new(self.head.as_ref().map(Rc::as_ref))
     }
 }
 
 impl Display for List {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "[{}", link_to_string(&self.head))
-    }
-}
-
-fn link_to_string(this: &Link) -> String {
-    match this {
-        Some(node) => {
-            format!("{} {}", node.value, link_to_string(&node.next))
-        }
-        None => String::from("]"),
+        write!(
+            f,
+            "[{}]",
+            self.iter()
+                .map(|v| Cow::Owned(v.to_string()))
+                .intersperse(Cow::Borrowed(" "))
+                .collect::<String>()
+        )
     }
 }
 
 #[macro_export]
 macro_rules! make_list {
-    ($($all:expr),*) => {
+    ($($all:expr),* $(,)?) => {
         $crate::list::List {
             head: make_list!(@a $($all),*)
         }
@@ -55,12 +55,12 @@ macro_rules! make_list {
 }
 
 pub struct ListIter<'a> {
-    link: &'a Link,
+    node: Option<&'a Node>,
 }
 
 impl<'a> ListIter<'a> {
-    pub fn new(link: &'a Link) -> Self {
-        Self { link }
+    pub fn new(node: Option<&'a Node>) -> Self {
+        Self { node }
     }
 }
 
@@ -68,9 +68,9 @@ impl<'a> Iterator for ListIter<'a> {
     type Item = &'a Value;
 
     fn next(&mut self) -> Option<Self::Item> {
-        match self.link {
+        match self.node {
             Some(node) => {
-                self.link = &node.next;
+                self.node = node.next.as_ref().map(Rc::as_ref);
                 Some(&node.value)
             }
             None => None,

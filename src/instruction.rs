@@ -8,4 +8,5 @@ pub enum Instruction {
     Print,
     Add,
     Sub,
+    Exec,
 }

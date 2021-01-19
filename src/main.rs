@@ -12,10 +12,13 @@ fn main() {
         Int(40),
         Int(4),
         Int(2),
-        Instruction(Dup),
-        Instruction(Pop),
-        Instruction(Sub),
-        Instruction(Add),
+        List(make_list![
+            Instruction(Dup),
+            Instruction(Pop),
+            Instruction(Sub),
+            Instruction(Add)
+        ]),
+        Instruction(Exec),
         Instruction(Print),
     ];
 

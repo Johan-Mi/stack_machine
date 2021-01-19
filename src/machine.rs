@@ -57,8 +57,12 @@ where
 
     pub fn step(&mut self) -> Result<(), MachineError> {
         let v = self.program.next().ok_or(MachineError::EndOfProgram)?;
-        println!("Running: {}", v);
-        let ret = match v {
+        self.exec_value(v)
+    }
+
+    pub fn exec_value(&mut self, value: Value) -> Result<(), MachineError> {
+        println!("Running: {}", value);
+        let ret = match value {
             Value::Instruction(inst) => self.exec_instruction(&inst),
             v => {
                 self.push(v);
@@ -116,6 +120,17 @@ where
                         Ok(())
                     }
                     _ => todo!(),
+                }
+            }
+            Instruction::Exec => {
+                let list = self.pop()?;
+                if let Value::List(list) = list {
+                    for i in list.iter() {
+                        self.exec_value(i.clone())?;
+                    }
+                    Ok(())
+                } else {
+                    todo!();
                 }
             }
         }
