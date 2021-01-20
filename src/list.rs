@@ -1,4 +1,5 @@
 use super::value::Value;
+use derive_more::Constructor;
 use itertools::Itertools;
 use std::borrow::Cow;
 use std::fmt::{self, Display};
@@ -23,7 +24,7 @@ impl List {
 }
 
 impl Display for List {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
             "[{}]",
@@ -54,26 +55,17 @@ macro_rules! make_list {
     };
 }
 
+#[derive(Constructor)]
 pub struct ListIter<'a> {
     node: Option<&'a Node>,
-}
-
-impl<'a> ListIter<'a> {
-    pub fn new(node: Option<&'a Node>) -> Self {
-        Self { node }
-    }
 }
 
 impl<'a> Iterator for ListIter<'a> {
     type Item = &'a Value;
 
     fn next(&mut self) -> Option<Self::Item> {
-        match self.node {
-            Some(node) => {
-                self.node = node.next.as_ref().map(Rc::as_ref);
-                Some(&node.value)
-            }
-            None => None,
-        }
+        let node = self.node?;
+        self.node = node.next.as_ref().map(Rc::as_ref);
+        Some(&node.value)
     }
 }
