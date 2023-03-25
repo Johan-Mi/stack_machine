@@ -26,7 +26,7 @@ impl<I> Machine<I>
 where
     I: Iterator<Item = Value>,
 {
-    pub fn new(program: I) -> Self {
+    pub const fn new(program: I) -> Self {
         Self {
             program,
             stack: Vec::new(),
@@ -61,9 +61,9 @@ where
     }
 
     pub fn exec_value(&mut self, value: &Value) -> Result<(), MachineError> {
-        println!("Running: {}", value);
+        println!("Running: {value}");
         let ret = match value {
-            Value::Instruction(inst) => self.exec_instruction(&inst),
+            Value::Instruction(inst) => self.exec_instruction(*inst),
             v => {
                 self.push(v.clone());
                 Ok(())
@@ -82,7 +82,7 @@ where
 
     pub fn exec_instruction(
         &mut self,
-        inst: &Instruction,
+        inst: Instruction,
     ) -> Result<(), MachineError> {
         match inst {
             Instruction::Nop => Ok(()),
@@ -97,7 +97,7 @@ where
             }
             Instruction::Print => {
                 let value = self.pop()?;
-                println!("{}", value);
+                println!("{value}");
                 Ok(())
             }
             Instruction::Add => {

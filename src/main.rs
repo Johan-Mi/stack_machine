@@ -25,6 +25,6 @@ fn main() {
     let mut machine = Machine::new(program.into_iter());
 
     if let Err(err) = machine.run() {
-        eprintln!("Error: {}", err);
+        eprintln!("Error: {err}");
     }
 }
