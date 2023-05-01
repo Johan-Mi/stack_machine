@@ -43,14 +43,14 @@ where
         self.stack.last().ok_or(Error::TopEmptyStack)
     }
 
-    pub fn step(&mut self) -> Result<ControlFlow<()>, Error> {
+    fn step(&mut self) -> Result<ControlFlow<()>, Error> {
         let Some(v) = self.program.next() else {
             return Ok(ControlFlow::Break(()))
         };
         self.exec_instruction(v).map(ControlFlow::Continue)
     }
 
-    pub fn exec_instruction(&mut self, inst: Instruction) -> Result<(), Error> {
+    fn exec_instruction(&mut self, inst: Instruction) -> Result<(), Error> {
         match inst {
             Instruction::Push(val) => {
                 self.push(val);
