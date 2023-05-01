@@ -1,12 +1,19 @@
 use crate::{instruction::Instruction, value::Value};
+use std::fmt::{Debug, Display};
 use thiserror::Error;
 
-#[derive(Debug, Error)]
+#[derive(Error)]
 pub enum Error {
     #[error("tried to pop from empty stack")]
     PopEmptyStack,
     #[error("tried to get top of empty stack")]
     TopEmptyStack,
+}
+
+impl Debug for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        Display::fmt(self, f)
+    }
 }
 
 pub struct Machine {

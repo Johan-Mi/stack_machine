@@ -6,9 +6,8 @@ mod machine;
 mod value;
 
 use machine::Machine;
-use std::process::ExitCode;
 
-fn main() -> ExitCode {
+fn main() -> Result<(), machine::Error> {
     use instruction::Instruction as I;
     use value::Value as V;
     let program = vec![
@@ -23,10 +22,5 @@ fn main() -> ExitCode {
 
     let mut machine = Machine::new();
 
-    if let Err(err) = machine.run(program.into_iter()) {
-        eprintln!("Error: {err}");
-        ExitCode::FAILURE
-    } else {
-        ExitCode::SUCCESS
-    }
+    machine.run(program.into_iter())
 }
