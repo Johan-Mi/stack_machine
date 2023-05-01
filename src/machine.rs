@@ -80,13 +80,9 @@ impl<I> Machine<I> {
                 }
             }
             Instruction::Exec => {
-                let list = self.pop()?;
-                if let Value::List(list) = list {
-                    for i in list {
-                        self.exec_instruction(i)?;
-                    }
-                } else {
-                    todo!();
+                let Value::List(list) = self.pop()? else { todo!() };
+                for i in list {
+                    self.exec_instruction(i)?;
                 }
             }
         };
