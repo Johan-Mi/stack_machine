@@ -14,10 +14,7 @@ pub struct Machine<I> {
     stack: Vec<Value>,
 }
 
-impl<I> Machine<I>
-where
-    I: Iterator<Item = Instruction>,
-{
+impl<I> Machine<I> {
     pub const fn new(program: I) -> Self {
         Self {
             program,
@@ -25,7 +22,10 @@ where
         }
     }
 
-    pub fn run(&mut self) -> Result<(), Error> {
+    pub fn run(&mut self) -> Result<(), Error>
+    where
+        I: Iterator<Item = Instruction>,
+    {
         while let Some(inst) = self.program.next() {
             self.exec_instruction(inst)?;
         }
