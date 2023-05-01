@@ -1,5 +1,4 @@
 use crate::{instruction::Instruction, value::Value};
-use std::ops::ControlFlow;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -27,7 +26,9 @@ where
     }
 
     pub fn run(&mut self) -> Result<(), Error> {
-        while self.step()?.is_continue() {}
+        while let Some(inst) = self.program.next() {
+            self.exec_instruction(inst)?;
+        }
         Ok(())
     }
 
@@ -41,13 +42,6 @@ where
 
     fn top(&self) -> Result<&Value, Error> {
         self.stack.last().ok_or(Error::TopEmptyStack)
-    }
-
-    fn step(&mut self) -> Result<ControlFlow<()>, Error> {
-        let Some(v) = self.program.next() else {
-            return Ok(ControlFlow::Break(()))
-        };
-        self.exec_instruction(v).map(ControlFlow::Continue)
     }
 
     fn exec_instruction(&mut self, inst: Instruction) -> Result<(), Error> {
