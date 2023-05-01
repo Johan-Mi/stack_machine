@@ -109,8 +109,8 @@ where
             Instruction::Exec => {
                 let list = self.pop()?;
                 if let Value::List(list) = list {
-                    for i in list.iter() {
-                        self.exec_value(i)?;
+                    for i in list {
+                        self.exec_value(&i)?;
                     }
                     Ok(())
                 } else {

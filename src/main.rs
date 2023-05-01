@@ -1,7 +1,6 @@
 #![forbid(unsafe_code)]
 
 mod instruction;
-mod list;
 mod machine;
 mod value;
 use instruction::Instruction::*;
@@ -14,11 +13,11 @@ fn main() {
         Int(40),
         Int(4),
         Int(2),
-        List(make_list![
+        List(vec![
             Instruction(Dup),
             Instruction(Pop),
             Instruction(Sub),
-            Instruction(Add)
+            Instruction(Add),
         ]),
         Instruction(Exec),
         Instruction(Print),

@@ -1,9 +1,11 @@
-use crate::{instruction::Instruction, list::List};
+use crate::instruction::Instruction;
 use derive_more::Display;
+use itertools::Itertools;
 
 #[derive(Clone, Display)]
 pub enum Value {
     Int(i32),
-    List(List),
+    #[display(fmt = "[{}]", "_0.iter().format(\" \")")]
+    List(Vec<Value>),
     Instruction(Instruction),
 }
