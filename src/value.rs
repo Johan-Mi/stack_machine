@@ -1,11 +1,20 @@
 use crate::instruction::Instruction;
-use derive_more::Display;
 use itertools::Itertools;
+use std::fmt::{self, Display};
 
-#[derive(Clone, Display)]
+#[derive(Clone)]
 pub enum Value {
     Int(i32),
-    #[display(fmt = "[{}]", "_0.iter().format(\" \")")]
     List(Vec<Value>),
     Instruction(Instruction),
+}
+
+impl Display for Value {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Int(i) => i.fmt(f),
+            Self::List(list) => write!(f, "[{}]", list.iter().format(" ")),
+            Self::Instruction(instr) => instr.fmt(f),
+        }
+    }
 }
