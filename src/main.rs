@@ -4,9 +4,11 @@
 mod instruction;
 mod machine;
 mod value;
-use machine::Machine;
 
-fn main() {
+use machine::Machine;
+use std::process::ExitCode;
+
+fn main() -> ExitCode {
     use instruction::Instruction as I;
     use value::Value as V;
     let program = vec![
@@ -23,5 +25,8 @@ fn main() {
 
     if let Err(err) = machine.run(program.into_iter()) {
         eprintln!("Error: {err}");
+        ExitCode::FAILURE
+    } else {
+        ExitCode::SUCCESS
     }
 }
