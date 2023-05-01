@@ -1,3 +1,5 @@
+#![forbid(unsafe_code)]
+
 mod instruction;
 mod list;
 mod machine;
