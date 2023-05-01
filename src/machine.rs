@@ -4,7 +4,7 @@ use itertools::Itertools;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-pub enum MachineError {
+pub enum Error {
     #[error("program counter has reached the end of the program")]
     EndOfProgram,
     #[error("tried to pop from empty stack")]
@@ -32,34 +32,34 @@ where
         }
     }
 
-    pub fn run(&mut self) -> Result<(), MachineError> {
+    pub fn run(&mut self) -> Result<(), Error> {
         loop {
             match self.step() {
                 Ok(()) => (),
-                Err(MachineError::EndOfProgram) => break Ok(()),
+                Err(Error::EndOfProgram) => break Ok(()),
                 Err(err) => break Err(err),
             }
         }
     }
 
-    fn pop(&mut self) -> Result<Value, MachineError> {
-        self.stack.pop().ok_or(MachineError::PopEmptyStack)
+    fn pop(&mut self) -> Result<Value, Error> {
+        self.stack.pop().ok_or(Error::PopEmptyStack)
     }
 
     fn push(&mut self, value: Value) {
         self.stack.push(value);
     }
 
-    fn top(&self) -> Result<&Value, MachineError> {
-        self.stack.last().ok_or(MachineError::TopEmptyStack)
+    fn top(&self) -> Result<&Value, Error> {
+        self.stack.last().ok_or(Error::TopEmptyStack)
     }
 
-    pub fn step(&mut self) -> Result<(), MachineError> {
-        let v = self.program.next().ok_or(MachineError::EndOfProgram)?;
+    pub fn step(&mut self) -> Result<(), Error> {
+        let v = self.program.next().ok_or(Error::EndOfProgram)?;
         self.exec_value(&v)
     }
 
-    pub fn exec_value(&mut self, value: &Value) -> Result<(), MachineError> {
+    pub fn exec_value(&mut self, value: &Value) -> Result<(), Error> {
         println!("Running: {value}");
         let ret = match value {
             Value::Instruction(inst) => self.exec_instruction(*inst),
@@ -72,10 +72,7 @@ where
         ret
     }
 
-    pub fn exec_instruction(
-        &mut self,
-        inst: Instruction,
-    ) -> Result<(), MachineError> {
+    pub fn exec_instruction(&mut self, inst: Instruction) -> Result<(), Error> {
         match inst {
             Instruction::Nop => Ok(()),
             Instruction::Pop => {

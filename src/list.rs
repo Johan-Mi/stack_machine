@@ -17,8 +17,8 @@ pub struct Node {
 }
 
 impl List {
-    pub fn iter(&self) -> ListIter {
-        ListIter::new(self.head.as_ref().map(Rc::as_ref))
+    pub fn iter(&self) -> Iter {
+        Iter::new(self.head.as_ref().map(Rc::as_ref))
     }
 }
 
@@ -48,11 +48,11 @@ macro_rules! make_list {
 }
 
 #[derive(Constructor)]
-pub struct ListIter<'a> {
+pub struct Iter<'a> {
     node: Option<&'a Node>,
 }
 
-impl<'a> Iterator for ListIter<'a> {
+impl<'a> Iterator for Iter<'a> {
     type Item = &'a Value;
 
     fn next(&mut self) -> Option<Self::Item> {
