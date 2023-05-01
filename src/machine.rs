@@ -45,25 +45,19 @@ impl<I> Machine<I> {
     }
 
     fn exec_instruction(&mut self, inst: Instruction) -> Result<(), Error> {
-        match inst {
-            Instruction::Push(val) => {
-                self.push(val);
-                Ok(())
-            }
-            Instruction::Nop => Ok(()),
+        Ok(match inst {
+            Instruction::Push(val) => self.push(val),
+            Instruction::Nop => {}
             Instruction::Pop => {
                 self.pop()?;
-                Ok(())
             }
             Instruction::Dup => {
                 let top = self.top()?.clone();
                 self.push(top);
-                Ok(())
             }
             Instruction::Print => {
                 let value = self.pop()?;
                 println!("{value}");
-                Ok(())
             }
             Instruction::Add => {
                 let rhs = self.pop()?;
@@ -71,7 +65,6 @@ impl<I> Machine<I> {
                 match (lhs, rhs) {
                     (Value::Int(lhs), Value::Int(rhs)) => {
                         self.push(Value::Int(lhs + rhs));
-                        Ok(())
                     }
                     _ => todo!(),
                 }
@@ -82,7 +75,6 @@ impl<I> Machine<I> {
                 match (lhs, rhs) {
                     (Value::Int(lhs), Value::Int(rhs)) => {
                         self.push(Value::Int(lhs - rhs));
-                        Ok(())
                     }
                     _ => todo!(),
                 }
@@ -93,11 +85,10 @@ impl<I> Machine<I> {
                     for i in list {
                         self.exec_instruction(i)?;
                     }
-                    Ok(())
                 } else {
                     todo!();
                 }
             }
-        }
+        })
     }
 }
