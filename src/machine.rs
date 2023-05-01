@@ -1,5 +1,4 @@
-use super::instruction::Instruction;
-use super::value::Value;
+use crate::{instruction::Instruction, value::Value};
 use itertools::Itertools;
 use thiserror::Error;
 

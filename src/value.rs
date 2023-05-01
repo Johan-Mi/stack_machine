@@ -1,5 +1,4 @@
-use super::instruction::Instruction;
-use super::list::List;
+use crate::{instruction::Instruction, list::List};
 use derive_more::Display;
 
 #[derive(Clone, Display)]

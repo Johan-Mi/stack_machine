@@ -1,8 +1,10 @@
-use super::value::Value;
+use crate::value::Value;
 use derive_more::Constructor;
 use itertools::Itertools;
-use std::fmt::{self, Display};
-use std::rc::Rc;
+use std::{
+    fmt::{self, Display},
+    rc::Rc,
+};
 
 #[derive(Clone)]
 pub struct List {
