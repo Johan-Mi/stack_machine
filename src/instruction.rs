@@ -13,19 +13,14 @@ pub enum Instruction {
 
 impl Display for Instruction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        use Instruction::*;
-        write!(
-            f,
-            "{}",
-            match self {
-                Nop => "nop",
-                Pop => "pop",
-                Dup => "dup",
-                Print => "print",
-                Add => "add",
-                Sub => "sub",
-                Exec => "exec",
-            }
-        )
+        f.write_str(match self {
+            Instruction::Nop => "nop",
+            Instruction::Pop => "pop",
+            Instruction::Dup => "dup",
+            Instruction::Print => "print",
+            Instruction::Add => "add",
+            Instruction::Sub => "sub",
+            Instruction::Exec => "exec",
+        })
     }
 }
