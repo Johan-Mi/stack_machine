@@ -10,10 +10,7 @@ pub enum Error {
     TopEmptyStack,
 }
 
-pub struct Machine<I>
-where
-    I: Iterator<Item = Instruction>,
-{
+pub struct Machine<I> {
     program: I,
     stack: Vec<Value>,
 }
