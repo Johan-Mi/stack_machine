@@ -1,5 +1,4 @@
 use crate::{instruction::Instruction, value::Value};
-use itertools::Itertools;
 use std::ops::ControlFlow;
 use thiserror::Error;
 
@@ -13,7 +12,7 @@ pub enum Error {
 
 pub struct Machine<I>
 where
-    I: Iterator<Item = Value>,
+    I: Iterator<Item = Instruction>,
 {
     program: I,
     stack: Vec<Value>,
@@ -21,7 +20,7 @@ where
 
 impl<I> Machine<I>
 where
-    I: Iterator<Item = Value>,
+    I: Iterator<Item = Instruction>,
 {
     pub const fn new(program: I) -> Self {
         Self {
@@ -51,24 +50,15 @@ where
         let Some(v) = self.program.next() else {
             return Ok(ControlFlow::Break(()))
         };
-        self.exec_value(&v).map(ControlFlow::Continue)
-    }
-
-    pub fn exec_value(&mut self, value: &Value) -> Result<(), Error> {
-        println!("Running: {value}");
-        let ret = match value {
-            Value::Instruction(inst) => self.exec_instruction(*inst),
-            v => {
-                self.push(v.clone());
-                Ok(())
-            }
-        };
-        println!("Stack:   [{}]", self.stack.iter().format(" "));
-        ret
+        self.exec_instruction(v).map(ControlFlow::Continue)
     }
 
     pub fn exec_instruction(&mut self, inst: Instruction) -> Result<(), Error> {
         match inst {
+            Instruction::Push(val) => {
+                self.push(val);
+                Ok(())
+            }
             Instruction::Nop => Ok(()),
             Instruction::Pop => {
                 self.pop()?;
@@ -110,7 +100,7 @@ where
                 let list = self.pop()?;
                 if let Value::List(list) = list {
                     for i in list {
-                        self.exec_value(&i)?;
+                        self.exec_instruction(i)?;
                     }
                     Ok(())
                 } else {

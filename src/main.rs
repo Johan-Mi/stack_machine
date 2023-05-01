@@ -9,18 +9,13 @@ use value::Value::*;
 
 fn main() {
     let program = vec![
-        Instruction(Nop),
-        Int(40),
-        Int(4),
-        Int(2),
-        List(vec![
-            Instruction(Dup),
-            Instruction(Pop),
-            Instruction(Sub),
-            Instruction(Add),
-        ]),
-        Instruction(Exec),
-        Instruction(Print),
+        Nop,
+        Push(Int(40)),
+        Push(Int(4)),
+        Push(Int(2)),
+        Push(List(vec![Dup, Pop, Sub, Add])),
+        Exec,
+        Print,
     ];
 
     let mut machine = Machine::new(program.into_iter());
