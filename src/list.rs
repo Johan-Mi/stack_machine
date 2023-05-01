@@ -1,7 +1,6 @@
 use super::value::Value;
 use derive_more::Constructor;
 use itertools::Itertools;
-use std::borrow::Cow;
 use std::fmt::{self, Display};
 use std::rc::Rc;
 
@@ -25,14 +24,7 @@ impl List {
 
 impl Display for List {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.iter()
-                .map(|v| Cow::Owned(v.to_string()))
-                .intersperse(Cow::Borrowed(" "))
-                .collect::<String>()
-        )
+        write!(f, "[{}]", self.iter().format(" "))
     }
 }
 

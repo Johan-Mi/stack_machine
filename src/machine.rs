@@ -1,7 +1,6 @@
 use super::instruction::Instruction;
 use super::value::Value;
 use itertools::Itertools;
-use std::borrow::Cow;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -69,14 +68,7 @@ where
                 Ok(())
             }
         };
-        println!(
-            "Stack:   [{}]",
-            self.stack
-                .iter()
-                .map(|v| Cow::Owned(v.to_string()))
-                .intersperse(Cow::Borrowed(" "))
-                .collect::<String>()
-        );
+        println!("Stack:   [{}]", self.stack.iter().format(" "));
         ret
     }
 
