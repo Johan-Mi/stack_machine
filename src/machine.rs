@@ -45,7 +45,7 @@ impl<I> Machine<I> {
     }
 
     fn exec_instruction(&mut self, inst: Instruction) -> Result<(), Error> {
-        Ok(match inst {
+        match inst {
             Instruction::Push(val) => self.push(val),
             Instruction::Nop => {}
             Instruction::Pop => {
@@ -89,6 +89,7 @@ impl<I> Machine<I> {
                     todo!();
                 }
             }
-        })
+        };
+        Ok(())
     }
 }
