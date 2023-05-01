@@ -9,24 +9,20 @@ pub enum Error {
     TopEmptyStack,
 }
 
-pub struct Machine<I> {
-    program: I,
+pub struct Machine {
     stack: Vec<Value>,
 }
 
-impl<I> Machine<I> {
-    pub const fn new(program: I) -> Self {
-        Self {
-            program,
-            stack: Vec::new(),
-        }
+impl Machine {
+    pub const fn new() -> Self {
+        Self { stack: Vec::new() }
     }
 
-    pub fn run(&mut self) -> Result<(), Error>
-    where
-        I: Iterator<Item = Instruction>,
-    {
-        while let Some(inst) = self.program.next() {
+    pub fn run(
+        &mut self,
+        program: impl Iterator<Item = Instruction>,
+    ) -> Result<(), Error> {
+        for inst in program {
             self.exec_instruction(inst)?;
         }
         Ok(())

@@ -19,9 +19,9 @@ fn main() {
         I::Print,
     ];
 
-    let mut machine = Machine::new(program.into_iter());
+    let mut machine = Machine::new();
 
-    if let Err(err) = machine.run() {
+    if let Err(err) = machine.run(program.into_iter()) {
         eprintln!("Error: {err}");
     }
 }
