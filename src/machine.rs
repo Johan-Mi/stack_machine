@@ -1,11 +1,10 @@
 use crate::{instruction::Instruction, value::Value};
 use itertools::Itertools;
+use std::ops::ControlFlow;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum Error {
-    #[error("program counter has reached the end of the program")]
-    EndOfProgram,
     #[error("tried to pop from empty stack")]
     PopEmptyStack,
     #[error("tried to get top of empty stack")]
@@ -32,13 +31,8 @@ where
     }
 
     pub fn run(&mut self) -> Result<(), Error> {
-        loop {
-            match self.step() {
-                Ok(()) => (),
-                Err(Error::EndOfProgram) => break Ok(()),
-                Err(err) => break Err(err),
-            }
-        }
+        while self.step()?.is_continue() {}
+        Ok(())
     }
 
     fn pop(&mut self) -> Result<Value, Error> {
@@ -53,9 +47,11 @@ where
         self.stack.last().ok_or(Error::TopEmptyStack)
     }
 
-    pub fn step(&mut self) -> Result<(), Error> {
-        let v = self.program.next().ok_or(Error::EndOfProgram)?;
-        self.exec_value(&v)
+    pub fn step(&mut self) -> Result<ControlFlow<()>, Error> {
+        let Some(v) = self.program.next() else {
+            return Ok(ControlFlow::Break(()))
+        };
+        self.exec_value(&v).map(ControlFlow::Continue)
     }
 
     pub fn exec_value(&mut self, value: &Value) -> Result<(), Error> {
